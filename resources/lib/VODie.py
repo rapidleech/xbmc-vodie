@@ -19,7 +19,7 @@ import pickle
 from Channels import Channels
 import MenuConstants
 
-__settings__ = xbmcaddon.Addon(id='plugin.video.rte')
+__settings__ = xbmcaddon.Addon(id='plugin.video.vodie')
 getLS = __settings__.getLocalizedString
 
 class updateArgs:
@@ -128,6 +128,10 @@ class Main:
         self.ADDON_DATA_PATH = xbmc.translatePath(self.ADDON.getAddonInfo("Profile"))
         self.FAVORITES_PATH = os.path.join(self.ADDON_DATA_PATH, 'favorites.pickle')
         self.RECENT_PATH = os.path.join(self.ADDON_DATA_PATH, 'recent.pickle')
+
+        # Create addon data path
+        if(not os.path.isdir(os.path.dirname(ADDON_DATA_PATH))):
+            os.makedirs(os.path.dirname(ADDON_DATA_PATH))
 
         if checkMode:
             self.checkMode()
