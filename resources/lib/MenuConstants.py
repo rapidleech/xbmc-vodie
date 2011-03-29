@@ -1,0 +1,14 @@
+#!/usr/bin/python
+
+"""
+    VODie
+    kitesurfing@kitesurfing.ie
+"""
+
+MODE_MAINMENU    = 'MAINMENU'
+MODE_CREATEMENU  = 'CREATEMENU'
+MODE_LIVEMENU    = 'LIVEMENU'
+MODE_GETEPISODES = 'GETEPISODES'
+MODE_PLAYVIDEO   = 'PLAYVIDEO'
+MODE_CATEGORY    = 'CATEGORY'
+MODE_ATOZ        = 'ATOZ'
