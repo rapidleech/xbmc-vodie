@@ -73,7 +73,7 @@ class UI:
         #If it is a Folder, we add the context menu to add to favorite shows
         if isFolder:
             if addToFavorites:
-                contexturl = 'plugin://plugin.video.rte/?'+\
+                contexturl = 'plugin://plugin.video.vodie/?'+\
                              'mode=addfavorite'+\
                              '&url='     +urllib.quote_plus(info['url'])+\
                              '&name='    +urllib.quote_plus(info['Title'])+\
@@ -82,7 +82,7 @@ class UI:
                 runScript = "XBMC.RunPlugin(%s)" % contexturl
                 li.addContextMenuItems([('Add to Favorite Program Series', runScript)], True)
             else:
-                contexturl = 'plugin://plugin.video.rte/?'+\
+                contexturl = 'plugin://plugin.video.vodie/?'+\
                     'mode=delfavorite'+\
                     '&url='+urllib.quote_plus(info['url'])+\
                     '&name='+urllib.quote_plus(info['Title'])+\

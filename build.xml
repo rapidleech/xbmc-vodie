@@ -8,7 +8,7 @@
 	
 	<target name="cleanXBMC">
 		<delete verbose="true" dir="${XBMC_HOME}/addons/plugin.video.vodie"></delete>
-		<delete verbose="true" dir="${XBMC_HOME}/userdata/plugin.video.vodie"></delete>
+		<delete verbose="true" dir="${XBMC_HOME}/userdata/addon_data/plugin.video.vodie"></delete>
 	</target>
 	
 	<target name="deployToXBMC" depends="cleanXBMC">
