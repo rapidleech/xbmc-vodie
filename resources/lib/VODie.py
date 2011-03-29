@@ -130,8 +130,8 @@ class Main:
         self.RECENT_PATH = os.path.join(self.ADDON_DATA_PATH, 'recent.pickle')
 
         # Create addon data path
-        if(not os.path.isdir(os.path.dirname(ADDON_DATA_PATH))):
-            os.makedirs(os.path.dirname(ADDON_DATA_PATH))
+        if(not os.path.isdir(os.path.dirname(self.ADDON_DATA_PATH))):
+            os.makedirs(os.path.dirname(self.ADDON_DATA_PATH))
 
         if checkMode:
             self.checkMode()
