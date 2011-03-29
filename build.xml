@@ -1,0 +1,19 @@
+<project name="Build Vodie" default="zipit">
+	
+	<property file="build.properties"/>
+	
+	<target name="zipit">
+		<zip destfile="plugin.video.vodie.zip" basedir="." excludes="build.*" />
+	</target>
+	
+	<target name="cleanXBMC">
+		<delete verbose="true" dir="${XBMC_HOME}/addons/plugin.video.vodie"></delete>
+		<delete verbose="true" dir="${XBMC_HOME}/userdata/plugin.video.vodie"></delete>
+	</target>
+	
+	<target name="deployToXBMC" depends="cleanXBMC">
+		<copy todir="${XBMC_HOME}/addons/plugin.video.vodie">
+			<fileset dir="." excludes="**/.svn build.xml build.properties"/>
+		</copy>
+	</target>
+</project>

@@ -157,7 +157,7 @@ class RTE:
                 mp4url = "%s playpath=%s swfUrl=%s swfVfy=1 app=%s pageUrl=%s live=true" % (RTE_RTMPE_SERVER, str(content['url'])[len(RTE_RTMPE_SERVER):], SWFURL, RTE_APP, PAGEURL)
                 yield {'Channel'      : CHANNEL,
                        'TVShowTitle'  : content['url'],
-                       'Title'        : content['url'],
+                       'Title'        : urllib.unquote(content['url']),
                        'Plot'         : '',
                        'PlotOutline'  : '',
                        'id'           : id,
