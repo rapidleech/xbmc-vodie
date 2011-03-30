@@ -16,7 +16,7 @@
 	
 	<target name="deployToXBMC" depends="cleanXBMC">
 		<copy todir="${XBMC_HOME}/addons/plugin.video.vodie">
-			<fileset dir="." excludes="**/.svn build.xml build.properties"/>
+			<fileset dir="." excludes="**/.svn **/.pyo **/.pyc build.xml build.properties"/>
 		</copy>
 	</target>
 </project>

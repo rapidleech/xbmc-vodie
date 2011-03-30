@@ -112,7 +112,8 @@ class UI:
     
     def createMenu(self, items, isFolder = True):
         for item in items:
-            self.addItem(item, isFolder)
+            if not item is None:
+                self.addItem(item, isFolder)
 
         self.endofdirectory()
 
@@ -183,8 +184,6 @@ class Main:
         self.settings = dict()
         # Boolean allowing to enable or disable showing of the ads.        
         self.settings['include_ads'] = __settings__.getSetting('ads')
-        
-        print 'AAADDDDDSSSSS +++++++++++++++' + self.settings['include_ads'] 
 
     def checkMode(self):
         

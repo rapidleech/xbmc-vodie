@@ -92,9 +92,9 @@ class RTE:
             return default
         
     def getVideoDetails(self, url, includeAds = True):
-        print url
         page = urllib2.urlopen(url)
         soup = BeautifulStoneSoup(page, selfClosingTags=['link','category','media:player','media:thumbnail','rte:valid', 'rte:duration', 'rte:statistics'])
+        page.close()
         
         entry = soup.find('entry')
         
@@ -166,6 +166,7 @@ class RTE:
             elif content['rte:format'] == 'advertising' and includeAds:
                 page = urllib2.urlopen(content['url'])
                 soup = BeautifulStoneSoup(page, selfClosingTags=['CustomParameters','ISCI'])
+                page.close()
 
                 for bandwidth_value in ['high', 'medium', 'low']:
                     results = soup.findAll('flv', bandwidth=bandwidth_value)
@@ -191,6 +192,7 @@ class RTE:
     def getEpisodes(self, showID):
         page = urllib2.urlopen(PROGRAMME_URL + showID)
         soup = BeautifulStoneSoup(page, selfClosingTags=['link','category','media:player','media:thumbnail'])
+        page.close()
         
         items = soup.findAll('entry')
         for item in items:
@@ -217,6 +219,7 @@ class RTE:
     def getMenuItems(self, type, params = '', mode = MenuConstants.MODE_GETEPISODES):
         page = urllib2.urlopen(SHOW_BY_TYPE_URL%(type) + params)
         self.soup = BeautifulStoneSoup(page, selfClosingTags=['link','category','media:player','media:thumbnail'])
+        page.close()
 
         items = self.soup.findAll('entry')
         for item in items:

@@ -44,6 +44,7 @@ class TV3:
         # Load and read the URL
         f    = urllib2.urlopen(url)
         soup = BeautifulStoneSoup(f)
+        f.close()
         
         # Grab the data we need
         metabase = self.getStringFor(soup, 'meta', 'base')
@@ -64,6 +65,7 @@ class TV3:
         # Load and read the URL
         f    = urllib2.urlopen(MAINURL)
         text = f.read()
+        f.close()
 
         REGEXP = '<a class="whiteLink" href="videos.php\?openshows=1\&locID=(.*?)">(.*?)<\/a>'    
         for mymatch in re.findall(REGEXP, text):
@@ -77,7 +79,8 @@ class TV3:
         # Load and read the URL
         f = urllib2.urlopen(EPISODE_URL % (showID))
         text = f.read()
-            
+        f.close()
+        
         REGEXP = '^<a class="whiteLink" href="(videos.php\?video=.*?&date=(\d\d\d\d-\d\d-\d\d)&date_mode=&page=1&show_cal=\d*&newspanel=&showspanel=&web_only=&full_episodes=)">\s+<img src=(.*?) height="84" alt="(.*?)" title="(.*?)"'
         for mymatch in re.findall(REGEXP, text, re.MULTILINE):
             # Default values

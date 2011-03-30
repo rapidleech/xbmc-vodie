@@ -4,4 +4,11 @@
     <category label="30075">
         <setting id="ads" type="bool" label="30070" default="true" />
     </category>
+    
+    <!--Magnet TV-->
+    <category label="30085">
+        <setting id="magnet_username" type="text" label="30080" default=""/>
+        <setting id="magnet_password" type="text" label="30081"/>
+    </category>
+    
 </settings>

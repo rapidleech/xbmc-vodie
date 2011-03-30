@@ -33,12 +33,14 @@ class TG4:
         # Load and Read the URL
         f = urllib2.urlopen(VIDEO_DETAIL_URL%(url))
         text = f.read()
+        f.close()
         
         REGEXP = "\'asseturl\':\'(.*?)\'"
         for mymatch in re.findall(REGEXP, text):
             # Load and Read found URL
             f = urllib2.urlopen(mymatch)
             text = f.read()
+            f.close()
             
             # Grabbing the MetaBase
             METABASE_REGEXP = '<meta base="(.*?)" />'
@@ -64,6 +66,7 @@ class TG4:
         # Load and Read URL
         f = urllib2.urlopen(MAINURL%(level))
         text = f.read()
+        f.close()
         
         PAGE_REGEXP = '<div id="pageMenu">(.*?)</div>'
         LINK_REGEXP = '<a href="main.aspx\?level=(.*?)"( class="active")?>(.*?)</a>'
@@ -86,6 +89,7 @@ class TG4:
         # Load and Read URL
         f = urllib2.urlopen(MAINURL%(showID))
         text = f.read()
+        f.close()
         
         LIST_REGEXP = '<div id="mainContentListContent">(.*?)</div></div></div>'
         EPISODE_REGEXP = '<img src="(.*?)" alt="cover art"></div></a><h1><a href="(.*?content=(.*?))" title="Show more info" class="moreinfo">(.*?)</a></h1><p class="shortDescription"><a href="(.*?)" title="Show more info" class="moreinfo">(.*?)</a>'
