@@ -3,8 +3,9 @@
 	<property file="build.properties"/>
 	
 	<target name="zipit">
-		<delete verbose="true" file="plugin.video.vodie.zip"></delete>
-		<zip destfile="plugin.video.vodie.zip" basedir="." excludes="build.*" />
+		<zip destfile="plugin.video.vodie.zip">
+			<zipfileset dir="." excludes="build" prefix="plugin.video.vodie"></zipfileset>
+		</zip>
 	</target>
 	
 	<target name="cleanXBMC">

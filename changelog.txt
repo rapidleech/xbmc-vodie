@@ -1,3 +1,14 @@
+[B]Version 1.0.1[/B]
+
+- Fixed parent folder for Zip Installation
+
 [B]Version 1.0.0[/B]
 
-- Here we come
+First release of VODie with version 1.0.0
+It includes:
+ - RTE Player
+ - RTE Live
+ - TV3 Player
+ - TG4 Player
+ - Common Favorite Programs (RTE, TV3 and TG4)
+ - Last 10 Recently Browsed Programs
