@@ -109,6 +109,19 @@ class UI:
 
         # Play the Playlist        
         xbmc.Player( xbmc.PLAYER_CORE_DVDPLAYER ).play(objPL)
+
+    def playRadio(self, name, url):
+        # Access the music playlist
+        objPL=xbmc.PlayList(xbmc.PLAYLIST_MUSIC)
+        objPL.clear()
+        
+        liz=xbmcgui.ListItem(name,
+                            iconImage = self.main.args.icon,
+                            thumbnailImage = self.main.args.icon)
+        objPL.add(url, liz)
+
+        # Play the Playlist        
+        xbmc.Player( xbmc.PLAYER_CORE_AUTO ).play(objPL)
     
     def createMenu(self, items, isFolder = True):
         for item in items:
@@ -194,6 +207,9 @@ class Main:
         elif mode == MenuConstants.MODE_PLAYVIDEO:
             video = Channels().getVideoDetails(self.args.channel, self.args.url, (self.settings['include_ads'] == 'true'))
             UI().playVideo(video)
+            
+        elif mode == MenuConstants.MODE_PLAYRADIO:
+            UI().playRadio(self.args.name, self.args.url)
 
         elif mode == MenuConstants.MODE_MAINMENU:
             menus, isFolder = Channels().getMainMenu(self.args.channel)

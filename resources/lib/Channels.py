@@ -12,6 +12,8 @@ import urllib, urllib2
 
 import RTEScrapper
 from RTEScrapper import RTE
+import RTERadioScrapper
+from RTERadioScrapper import RTERadio
 import TV3Scrapper
 from TV3Scrapper import TV3
 import TG4Scrapper
@@ -28,6 +30,7 @@ class Channels:
                 TV3().getChannelDetail(),
                 TG4().getChannelDetail(),
                 Magnet().getChannelDetail(),
+                RTERadio().getChannelDetail(),
                 {'Channel': 'All', 'Thumb':'../icon.png', 'Title':'Recently watched', 'mode':'recentlyWatched', 'Plot':''},\
                 {'Channel': 'All', 'Thumb':'../icon.png', 'Title':'Favorites', 'mode':'favorites', 'Plot':''}]
 
@@ -52,6 +55,8 @@ class Channels:
     def getMainMenu(self, channel):
         if channel == RTEScrapper.CHANNEL:
             return RTE().getMainMenu(), True
+        elif channel == RTERadioScrapper.CHANNEL:
+            return RTERadio().getMainMenu(), True
         elif channel == TG4Scrapper.CHANNEL:
             return TG4().getMainMenu(), True
         elif channel == TV3Scrapper.CHANNEL:
