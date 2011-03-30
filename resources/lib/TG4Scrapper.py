@@ -25,9 +25,9 @@ class TG4:
     def getChannelDetail(self):
         return {'Channel'  : CHANNEL,
                 'Thumb'    : LOGOICON,
-                'Title'    : 'TG4',
+                'Title'    : CHANNEL,
                 'mode'     : MenuConstants.MODE_MAINMENU,
-                'Plot'     : 'TG4'}
+                'Plot'     : CHANNEL}
         
     def getVideoDetails(self, url, includeAds = True):
         # Load and Read the URL
@@ -53,12 +53,12 @@ class TG4:
                 mp4 = mymatch2
 
             yield {'Channel'     : CHANNEL,
-                   'Title'       : 'TG4',
-                   'Director'    : 'TG4',
-                   'Genre'       : 'TG4',
-                   'Plot'        : 'TG4',
-                   'PlotOutline' : 'TG4',
-                   'id'          : '1093567',
+                   'Title'       : CHANNEL,
+                   'Director'    : CHANNEL,
+                   'Genre'       : CHANNEL,
+                   'Plot'        : CHANNEL,
+                   'PlotOutline' : CHANNEL,
+                   'id'          : url,
                    'url'         : '%s playpath=%s'%(metabase,mp4)
                    }
 

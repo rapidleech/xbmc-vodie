@@ -51,12 +51,12 @@ class TV3:
         videosrc = self.getStringFor(soup, 'video', 'src').replace('&amp;','&')
 
         yield {'Channel'     : CHANNEL,
-               'Title'       : 'TV3',
-               'Director'    : 'TV3',
-               'Genre'       : 'TV3',
-               'Plot'        : 'TV3',
-               'PlotOutline' : 'TV3',
-               'id'          : '1093567',
+               'Title'       : CHANNEL,
+               'Director'    : CHANNEL,
+               'Genre'       : CHANNEL,
+               'Plot'        : CHANNEL,
+               'PlotOutline' : CHANNEL,
+               'id'          : url,
                'url'         : '%s playpath=%s' % (metabase, videosrc)
                }
 
@@ -89,7 +89,7 @@ class TV3:
 
             # ListItem properties
             img   = mymatch[2]
-            title = mymatch[3]
+            title = self.convertHTML(mymatch[3])
             date  = mymatch[1]
             
             # Look for the higher resolution image 
@@ -124,6 +124,13 @@ class TV3:
                     'Year'        : year,
                     'Studio'      : CHANNEL
                     }
+
+    def convertHTML(self, text):
+        if not text == '':
+            return BeautifulStoneSoup(text, 
+                       convertEntities=BeautifulStoneSoup.HTML_ENTITIES).contents[0].encode( "utf-8" )
+        else:
+            return 'None'
 
 if __name__ == '__main__':
 
