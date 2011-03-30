@@ -1,3 +1,8 @@
+[B]Version 1.1.0[/B]
+
+- Bug Fixes
+- Added Magnet Web TV support for registered users.
+
 [B]Version 1.0.1[/B]
 
 - Fixed parent folder for Zip Installation
