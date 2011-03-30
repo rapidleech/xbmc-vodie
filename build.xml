@@ -4,7 +4,7 @@
 	
 	<target name="zipit">
 		<zip destfile="plugin.video.vodie.zip">
-			<zipfileset dir="." excludes="build" prefix="plugin.video.vodie"></zipfileset>
+			<zipfileset dir="." excludes="**/.svn **/*.pyo **/*.pyc build.xml build.properties" prefix="plugin.video.vodie"></zipfileset>
 		</zip>
 	</target>
 	
