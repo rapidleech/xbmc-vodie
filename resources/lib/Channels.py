@@ -20,6 +20,8 @@ import TG4Scrapper
 from TG4Scrapper import TG4
 import MagnetWebTvScrapper
 from MagnetWebTvScrapper import Magnet
+import ShoutcastRadioScrapper
+from ShoutcastRadioScrapper import ShoutcastRadio
 
 import MenuConstants
 
@@ -31,6 +33,7 @@ class Channels:
                 TG4().getChannelDetail(),
                 Magnet().getChannelDetail(),
                 RTERadio().getChannelDetail(),
+                ShoutcastRadio().getChannelDetail(),
                 {'Channel': 'All', 'Thumb':'../icon.png', 'Title':'Recently watched', 'mode':'recentlyWatched', 'Plot':''},\
                 {'Channel': 'All', 'Thumb':'../icon.png', 'Title':'Favorites', 'mode':'favorites', 'Plot':''}]
 
@@ -63,6 +66,8 @@ class Channels:
             return TV3().getMainMenu(), True
         elif channel == MagnetWebTvScrapper.CHANNEL:
             return Magnet().getMainMenu(), True
+        elif channel == ShoutcastRadioScrapper.CHANNEL:
+            return ShoutcastRadio().getMainMenu(), True
             
     def getEpisodes(self, channel, showID):
         if channel == RTEScrapper.CHANNEL:
@@ -84,6 +89,8 @@ class Channels:
                 return RTE().getMenuItems(menutype)
         elif channel == TG4Scrapper.CHANNEL:
             return TG4().getMenuItems(menutype)
+        elif channel == ShoutcastRadioScrapper.CHANNEL:
+            return ShoutcastRadio().getMenuItems(menutype)
                 
 if __name__ == '__main__':
     print 'hello'
