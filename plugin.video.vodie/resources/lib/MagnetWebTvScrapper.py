@@ -66,10 +66,19 @@ class Magnet:
         if not data['extension'] == 'mp4':
             ios_playUrl = ios_playUrl + "/playlist.m3u8?token=" + data['st']
         
-        # Build the RTMPE path
-        rtmpServer = "rtmpe://" + data['hostname'] + ":" + data['port'] + "/" + data['path']
-        playUrl = data['fileName'] + "."+ data['extension'] + "?token=" + data['st'];
-        rtmp_playUrl = '%s playpath=%s live=true' % (rtmpServer, playUrl)
+        print data['fileName']
+        print data['extension']
+        print data['st']
+        
+        # Build the play path
+        if data['extension'] == 'mp4':
+            rtmpServer = "http://" + data['hostname'] + ":" + data['port'] + "/" + data['path']
+            playUrl = data['fileName'] + "."+ data['extension'];
+            rtmp_playUrl = '%s/%s' % (rtmpServer, playUrl)
+        else:
+            rtmpServer = "rtmpe://" + data['hostname'] + ":" + data['port'] + "/" + data['path']
+            playUrl = data['fileName'] + "."+ data['extension'] + "?token=" + data['st'];
+            rtmp_playUrl = '%s playpath=%s live=true' % (rtmpServer, playUrl)
 
         # Close the response        
         resp.close()
@@ -193,8 +202,8 @@ class Magnet:
         opener.open(LOGOUT_URL)
                         
 if __name__ == '__main__':
-    #for menu in Magnet(False).getMainMenu():
-    #    print menu
+    for menu in Magnet(False).getMainMenu():
+        print menu
         
     for menu in Magnet(False).getEpisodes('9'):
         print menu
