@@ -13,6 +13,7 @@
 		</zip>
 		<copy file="${ZIP_FILENAME}" todir="${env.WORKSPACE}/repo/repository.googlecode.xbmc-vodie"/>
 		<copy file="changelog.txt" tofile="${env.WORKSPACE}/repo/repository.googlecode.xbmc-vodie/changelog-${VERSION}.txt"/>
+		<copy file="icon.png" todir="${env.WORKSPACE}/repo/repository.googlecode.xbmc-vodie"/>
 	</target>
 	
 </project>
