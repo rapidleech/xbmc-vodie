@@ -1,11 +1,16 @@
 <project name="Build Vodie" default="zipit">
 	
 	<property file="build.properties"/>
+	<property environment="env"/>
 	
 	<target name="zipit">
-		<zip destfile="plugin.video.vodie.zip">
+		<delete verbose="true" file="${ZIP_FILENAME}"></delete>
+		<zip destfile="${ZIP_FILENAME}">
 			<zipfileset dir="." excludes="**/.svn **/*.pyo **/*.pyc build.xml build.properties" prefix="plugin.video.vodie"></zipfileset>
 		</zip>
+		<copy file="${ZIP_FILENAME}" todir="${env.WORKSPACE}/repo/plugin.video.vodie"/>
+		<copy file="changelog.txt" tofile="${env.WORKSPACE}/repo/plugin.video.vodie/changelog-${VERSION}.txt"/>
+		<copy file="icon.png" todir="${env.WORKSPACE}/repo/plugin.video.vodie"/>
 	</target>
 	
 	<target name="cleanXBMC">
