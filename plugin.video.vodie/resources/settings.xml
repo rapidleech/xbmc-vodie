@@ -8,7 +8,10 @@
     <!--Magnet TV-->
     <category label="30085">
         <setting id="magnet_username" type="text" label="30080" default=""/>
-        <setting id="magnet_password" type="text" label="30081"/>
+        <setting id="magnet_password" type="text" option="hidden" label="30081" enable="!eq(-1,)" default=""/>
+		<setting type="lsep" label="You can create an account at magnetWebTv.ie if"/>
+		<setting type="lsep" label="you don't already have one. By doing so you will"/>
+		<setting type="lsep" label="be able to watch all your channels."/>
     </category>
     
 </settings>

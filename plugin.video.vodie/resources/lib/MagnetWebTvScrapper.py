@@ -45,8 +45,8 @@ class Magnet:
             self.getSettings()
         else:
             self.settings = dict()
-            self.settings['magnet_username'] = 'aledoux'
-            self.settings['magnet_password'] = 'takoon10'
+            self.settings['magnet_username'] = os.environ['MAGNET_USERNAME']
+            self.settings['magnet_password'] = os.environ['MAGNET_PASSWORD']
 
     def getSettings(self):
         self.settings = dict()
