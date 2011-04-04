@@ -1,22 +1,18 @@
 <project name="Build Vodie" default="zipit">
 	
 	<property file="build.properties"/>
+	<property environment="env"/>
 	
-	<target name="zipit">
-		<zip destfile="repository.googlecode.xbmc-vodie.zip">
+	<target name="clean">
+		<delete file="${ZIP_FILENAME}"/>
+	</target>
+	
+	<target name="zipit" depends="clean">
+		<zip destfile="${ZIP_FILENAME}">
 			<zipfileset dir="." excludes="**/.svn build.xml build.properties" prefix="repository.googlecode.xbmc-vodie"></zipfileset>
 		</zip>
+		<copy file="${ZIP_FILENAME}" todir="${env.WORKSPACE}/repo/repository.googlecode.xbmc-vodie"/>
+		<copy file="changelog.txt" tofile="${env.WORKSPACE}/repo/repository.googlecode.xbmc-vodie/changelog-${VERSION}.txt"/>
 	</target>
 	
-	<target name="cleanXBMC">
-		<delete verbose="true" file="plugin.video.vodie.zip"></delete>
-		<delete verbose="true" dir="${XBMC_HOME}/addons/plugin.video.vodie"></delete>
-		<delete verbose="true" dir="${XBMC_HOME}/userdata/addon_data/plugin.video.vodie"></delete>
-	</target>
-	
-	<target name="deployToXBMC" depends="cleanXBMC">
-		<copy todir="${XBMC_HOME}/addons/plugin.video.vodie">
-			<fileset dir="." excludes="**/.svn **/.pyo **/.pyc build.xml build.properties"/>
-		</copy>
-	</target>
 </project>
