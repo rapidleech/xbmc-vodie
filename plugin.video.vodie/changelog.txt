@@ -1,3 +1,7 @@
+[B]Version 1.1.1[/B]
+
+- Bug Fixes
+
 [B]Version 1.1.0[/B]
 
 - Bug Fixes
