@@ -37,11 +37,13 @@ class UI:
 
     def __init__(self):
         self.main = Main(checkMode = False)
-        
-    def endofdirectory(self):
-        #Sort methods are required in library mode.
-        xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_DATE)
-        xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_TITLE)
+    
+    def endofdirectory(self, sortingMethods = [xbmcplugin.SORT_METHOD_NONE]):
+        #Sort methods are required in library mode. ie.
+        #    xbmcplugin.SORT_METHOD_DATE
+        #    xbmcplugin.SORT_METHOD_TITLE
+        for sortingMethod in sortingMethods:
+            xbmcplugin.addSortMethod(int(sys.argv[1]), sortingMethod)
         
         #let xbmc know the script is done adding items to the list.
         xbmcplugin.endOfDirectory(handle = int(sys.argv[1]))
@@ -128,7 +130,10 @@ class UI:
             if not item is None:
                 self.addItem(item, isFolder)
 
-        self.endofdirectory()
+        if isFolder:
+            self.endofdirectory()
+        else:
+            self.endofdirectory([xbmcplugin.SORT_METHOD_DATE, xbmcplugin.SORT_METHOD_NONE])
 
 class Main:
 
@@ -222,7 +227,6 @@ class Main:
             if not self.args.name.find(' on %s' % (self.args.channel)) > -1:
                 self.updateRecentlyWatched({'icon':self.args.icon, 'name':self.args.name, 'url':self.args.url, 'channel':self.args.channel})
             UI().createMenu(Channels().getEpisodes(self.args.channel, self.args.url), False)
-            
         elif mode == 'addfavorite':
             self.addFavorite({'name':self.args.name, 'url':self.args.url, 'channel':self.args.channel, 'icon': self.args.icon})
             
