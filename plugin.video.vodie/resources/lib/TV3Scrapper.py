@@ -9,12 +9,17 @@ import re
 import sys
 from BeautifulSoup import SoupStrainer, MinimalSoup as BeautifulSoup, BeautifulStoneSoup
 import urllib, urllib2
+from TVSeriesUtil import Util
 import MenuConstants
+from datetime import date
 
 # Url Constants
 TV3_URL      = 'http://www.tv3.ie/'
-MAINURL      = TV3_URL + 'includes/ajax/video_all_shows.php'
-EPISODE_URL  = TV3_URL + 'videos.php?locID=%s'
+#MAINURL      = TV3_URL + 'includes/ajax/video_all_shows.php'
+MAINURL      = TV3_URL + 'index.php'
+
+#EPISODE_URL  = TV3_URL + 'videos.php?locID=%s'
+EPISODE_URL  = TV3_URL + 'shows.php?request=%s'
 
 # Channel Constants
 CHANNEL = 'TV3'
@@ -67,12 +72,30 @@ class TV3:
         text = f.read()
         f.close()
 
-        REGEXP = '<a class="whiteLink" href="videos.php\?openshows=1\&locID=(.*?)">(.*?)<\/a>'    
+        BACKGRDREGEXP = '<div id="content" style="background-image: url(.*?)">'
+        for mymatch in re.findall(BACKGRDREGEXP, text):
+            print mymatch
+
+        REGEXP = '<a class="whiteLink" href="videos.php\?openshows=1\&locID=(.*?)">(.*?)<\/a>'
+        REGEXP = '<a href="(.*?)" class="dropDown" title="(.*?)">(.*?)</a>'    
         for mymatch in re.findall(REGEXP, text):
+            title = str(mymatch[1])
+                        
+            #details = Util().getSeriesDetailsByName(title)
+            #if details is None:
+            #    pic = TV3LOGO
+            #elif 'Poster' in details.keys():
+            #    pic = details['Poster']
+            #elif 'Season' in details.keys():
+            #    pic = details['Season']
+            #else:
+            #    pic = TV3LOGO
+            pic = TV3LOGO
+
             yield {'Channel' : CHANNEL,
-                   'Thumb'   : TV3LOGO,
+                   'Thumb'   : pic,
                    'url'     : mymatch[0],
-                   'Title'   : urllib.unquote( urllib.quote( mymatch[1] ).replace( '%92' , "'" ) ),
+                   'Title'   : title,
                    'mode'    : MenuConstants.MODE_GETEPISODES}
             
     def getEpisodes(self, showID):
@@ -81,32 +104,73 @@ class TV3:
         text = f.read()
         f.close()
         
+        TITLEREGEXP = '<title>(.*?) - TV3</title>'
+        for mymatch in re.findall(TITLEREGEXP, text, re.MULTILINE):
+            the_title = mymatch.strip()
+        
         REGEXP = '^<a class="whiteLink" href="(videos.php\?video=.*?&date=(\d\d\d\d-\d\d-\d\d)&date_mode=&page=1&show_cal=\d*&newspanel=&showspanel=&web_only=&full_episodes=)">\s+<img src=(.*?) height="84" alt="(.*?)" title="(.*?)"'
+        REGEXP = '<div id="panel_video_menu_entry"onclick="window.open\(\'(.*?)\',\'_self\'\)" onMouseOver="style.cursor=\'pointer\'">\s+<p class="video_menu_entry"><img class="float_left" src="(.*?)" width="116" height="64" alt="" border="0">\s+<strong>(.*?)</strong>\s+<br />(.*?)</p>'
         for mymatch in re.findall(REGEXP, text, re.MULTILINE):
+            print mymatch[0]
             # Default values
             description = 'None'
             link        = 'None'
 
             # ListItem properties
-            img   = mymatch[2]
-            title = self.convertHTML(mymatch[3])
-            date  = mymatch[1]
+            img   = mymatch[1]
+            datestr  = mymatch[2]
+            description = mymatch[3].strip()
             
             # Look for the higher resolution image 
             img = img.replace('thumbnail.jpg','preview_vp.jpg')
             
             # Format the date
-            date = "%s-%s-%s" % ( date[ 8 : 10], date[ 5 : 7 ], date[ : 4 ])
-            year = int("%s"%(date[6:10]))
+            date_array = datestr.split()
+            if len(date_array) == 4:
+                month = date_array[2][:-1].lower()
+                if month.find('jan') > -1:
+                    month = 1
+                elif month.find('feb') > -1:
+                    month = 2
+                elif month.find('mar') > -1:
+                    month = 3
+                elif month.find('apr') > -1:
+                    month = 4
+                elif month.find('may') > -1:
+                    month = 5
+                elif month.find('jun') > -1:
+                    month = 6
+                elif month.find('jul') > -1:
+                    month = 7
+                elif month.find('aug') > -1:
+                    month = 8
+                elif month.find('sep') > -1:
+                    month = 9
+                elif month.find('oct') > -1:
+                    month = 10
+                elif month.find('nov') > -1:
+                    month = 11
+                elif month.find('dec') > -1:
+                    month = 12
+                else:
+                    month = 0
+                
+                if month > 0:
+                    datestr = "%02d-%02d-%s" % ( int(date_array[1].replace('th','').replace('st','').replace('nd','')), month, '2011')
+                    title = the_title
+                else:
+                    title = the_title + ' - ' + datestr
+                    datestr = date.today().strftime("%d-%m-%Y")
+                    
+            else:
+                title = the_title + ' - ' + datestr
+                datestr = date.today().strftime("%d-%m-%Y")
+                
+            year = 2011
 
             # Load the URL for this episode
             f2    = urllib2.urlopen(TV3_URL + mymatch[0])
             text2 = f2.read()
-                        
-            # Get description
-            descre = '<\/strong><br \/><br \/>\s+(.*)'
-            for mymatch2 in re.findall(descre, text2, re.MULTILINE):
-                description = mymatch2.strip()
 
             # Get link for the mp4
             mp4re = 'url: \"(.*?mp4)\"'
@@ -115,12 +179,13 @@ class TV3:
             
             yield {'Channel'      : CHANNEL,
                     'Thumb'       : img,
+                    'Fanart_Image': img,
                     'url'         : link,
                     'Title'       : title,
                     'mode'        : MenuConstants.MODE_PLAYVIDEO,
                     'Plot'        : description,
                     'plotoutline' : title,
-                    'Date'        : date,
+                    'Date'        : datestr,
                     'Year'        : year,
                     'Studio'      : CHANNEL
                     }

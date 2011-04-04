@@ -9,6 +9,7 @@ import re
 import sys
 from BeautifulSoup import BeautifulStoneSoup
 import urllib, urllib2
+from TVSeriesUtil import Util
 import MenuConstants
 
 # Player Constants
@@ -227,7 +228,15 @@ class RTE:
             
             pic = LOGOICON
             if item.find('media:thumbnail'):
-                pic = item.find('media:thumbnail')['url']
+                details = Util().getSeriesDetailsByName(title)
+                if details is None:
+                    pic = item.find('media:thumbnail')['url']
+                elif 'Poster' in details.keys():
+                    pic = details['Poster']
+                elif 'Season' in details.keys():
+                    pic = details['Season']
+                else:
+                    pic = item.find('media:thumbnail')['url']
 
             if type == LIVE:
                 link = str(item.id.string).strip()
@@ -235,14 +244,16 @@ class RTE:
                        'Channel': CHANNEL,
                        'Thumb':pic,
                        'mode':MenuConstants.MODE_PLAYVIDEO,
-                       'url':link
+                       'url':link,
+                       #'Fanart_Image':fanart
                        }
             else:
                 yield {'Title':title,
                        'Channel': CHANNEL,
                        'Thumb':pic,
                        'mode':mode,
-                       'url':urllib.quote(title)
+                       'url':urllib.quote(title),
+                       #'Fanart_Image':fanart
                        }
                         
     def SearchByCategory(self, genre = None):

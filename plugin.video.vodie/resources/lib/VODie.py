@@ -70,7 +70,10 @@ class UI:
         li.setInfo(type       = 'video',
                    infoLabels = info)
 
-        li.setProperty('Fanart_Image', info['Thumb'])
+        if 'Fanart_Image' in info.keys():
+            li.setProperty('Fanart_Image', info['Fanart_Image'])
+        #else:
+        #    li.setProperty('Fanart_Image', info['Thumb'])
         
         #If it is a Folder, we add the context menu to add to favorite shows
         if isFolder:

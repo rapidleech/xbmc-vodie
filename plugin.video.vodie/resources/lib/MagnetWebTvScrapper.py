@@ -9,6 +9,7 @@ import re
 import sys
 from BeautifulSoup import BeautifulStoneSoup
 import urllib, urllib2, cookielib
+from TVSeriesUtil import Util
 import MenuConstants
 import simplejson as S
 from datetime import date
@@ -171,10 +172,22 @@ class Magnet:
                     # 1800 -> 30mins
                     # 3000 -> 50mins
                     
+                    title = self.convertHTML(video['name'])
+                    
+                    details = Util().getSeriesDetailsByName(title)
+                    if details is None:
+                        pic = LOGOICON
+                    elif 'Poster' in details.keys():
+                        pic = details['Poster']
+                    elif 'Season' in details.keys():
+                        pic = details['Season']
+                    else:
+                        pic = LOGOICON
+                    
                     yield {'Channel'      : CHANNEL,
-                            'Thumb'       : LOGOICON,
+                            'Thumb'       : pic,
                             'url'         : str(video['productId']),
-                            'Title'       : "%s - %s" % (showtime, self.convertHTML(video['name'])),
+                            'Title'       : "%s - %s" % (showtime, title),
                             'mode'        : MenuConstants.MODE_PLAYVIDEO,
                             'Plot'        : self.convertHTML(video['description']),
                             'plotoutline' : self.convertHTML(video['name']),
