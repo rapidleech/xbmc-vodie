@@ -11,19 +11,21 @@ from BeautifulSoup import BeautifulStoneSoup
 import urllib, urllib2
 from TVSeriesUtil import Util
 import MenuConstants
+import simplejson as S
 
 # Player Constants
 SWFURL = 'http://www.rte.ie/player/assets/player_439.swf'
 PAGEURL = 'http://www.rte.ie/player/'
 
 # URL Constants
-PROGRAMME_URL = 'http://dj.rte.ie/vodfeeds/feedgenerator/programme/?id='
+KNOWN_RTE_SHOWS_URL  = 'http://xbmc-vodie.googlecode.com/svn/trunk/plugin.video.vodie/xml/rteshows.json'
+PROGRAMME_URL    = 'http://dj.rte.ie/vodfeeds/feedgenerator/programme/?id='
 SHOW_BY_TYPE_URL = 'http://dj.rte.ie/vodfeeds/feedgenerator/%s/'
-FEATURES   = 'features'
-LATEST     = 'latestfront'
-LASTCHANCE = 'lastchancefront'
-GENRELIST  = 'genrelist'
-LIVE       = 'live'
+FEATURES         = 'features'
+LATEST           = 'latestfront'
+LASTCHANCE       = 'lastchancefront'
+GENRELIST        = 'genrelist'
+LIVE             = 'live'
 
 # Channel Constants
 CHANNEL = 'RTE'
@@ -74,6 +76,40 @@ CATYMENU =      {'Thumb'    : LOGOICON,
                  }
 
 class RTE:    
+    def __init__(self):
+        try:
+            page = urllib2.urlopen(KNOWN_RTE_SHOWS_URL)
+            self.KNOWN_RTE_SHOWS = S.load(page)
+            print len(self.KNOWN_RTE_SHOWS)
+        except:
+            self.KNOWN_RTE_SHOWS = {}
+        
+    def getShows(self,type, params=''):
+        page = urllib2.urlopen(SHOW_BY_TYPE_URL%(type) + params)
+        self.soup = BeautifulStoneSoup(page, selfClosingTags=['link','category','media:player','media:thumbnail'])
+        page.close()
+
+        items = self.soup.findAll('entry')
+        for item in items:
+            id = str(item.id.string).strip()
+            title = str(item.title.string).strip()
+            
+            try:
+                keys = self.KNOWN_RTE_SHOWS[title].keys()
+                
+                if 'Poster' in keys:
+                    pic = self.KNOWN_RTE_SHOWS[title]['Poster']
+                elif 'Season' in keys:
+                    pic = self.KNOWN_RTE_SHOWS[title]['Season']
+                elif item.find('media:thumbnail'):
+                    pic = item.find('media:thumbnail')['url']
+                else:
+                    pic = LOGOICON
+            except:
+                pic = LOGOICON
+                    
+            yield { "id": id, "title":title, "thumb":str(pic)}
+
 
     def getChannelDetail(self):
         return {'Channel': CHANNEL,
@@ -218,41 +254,21 @@ class RTE:
                     }
             
     def getMenuItems(self, type, params = '', mode = MenuConstants.MODE_GETEPISODES):
-        page = urllib2.urlopen(SHOW_BY_TYPE_URL%(type) + params)
-        self.soup = BeautifulStoneSoup(page, selfClosingTags=['link','category','media:player','media:thumbnail'])
-        page.close()
-
-        items = self.soup.findAll('entry')
-        for item in items:
-            title = str(item.title.string).strip()
-            
-            pic = LOGOICON
-            if item.find('media:thumbnail'):
-                details = Util().getSeriesDetailsByName(title)
-                if details is None:
-                    pic = item.find('media:thumbnail')['url']
-                elif 'Poster' in details.keys():
-                    pic = details['Poster']
-                elif 'Season' in details.keys():
-                    pic = details['Season']
-                else:
-                    pic = item.find('media:thumbnail')['url']
-
+        for show in self.getShows(type, params):
             if type == LIVE:
-                link = str(item.id.string).strip()
-                yield {'Title':title,
+                yield {'Title':show['title'],
                        'Channel': CHANNEL,
-                       'Thumb':pic,
+                       'Thumb':show['thumb'],
                        'mode':MenuConstants.MODE_PLAYVIDEO,
-                       'url':link,
+                       'url':show['id'],
                        #'Fanart_Image':fanart
                        }
             else:
-                yield {'Title':title,
+                yield {'Title':show['title'],
                        'Channel': CHANNEL,
-                       'Thumb':pic,
+                       'Thumb':show['thumb'],
                        'mode':mode,
-                       'url':urllib.quote(title),
+                       'url':urllib.quote(show['title']),
                        #'Fanart_Image':fanart
                        }
                         
@@ -280,14 +296,76 @@ class RTE:
             for item in self.getMenuItems(type='az', params='?id=%s'%(letter)):
                 yield item
 
+    def generateShowsAndSave(self):
+        f = open('../../xml/rteshows.json', 'w')
+        for letter in 'H':
+            for show in self.getShows(type='az', params='?id=%s'%(letter)):
+                key = show['title']
+                try:
+                    showkeys = self.KNOWN_RTE_SHOWS[key].keys()
+                    
+                    print 'Updating ' + show['title']
+                    if not 'TVDBid' in showkeys or not 'IMDB_ID' in showkeys:
+                        print 'Getting TVDBID and details'
+                        if not 'TVDBName' in showkeys:
+                            details = Util().getSeriesDetailsByName(show['title'])
+                        else:
+                            details = Util().getSeriesDetailsByName(self.KNOWN_RTE_SHOWS[key]['TVDBName'])
+                            
+                        if not details is None:
+                            self.KNOWN_RTE_SHOWS[key]['TVDBbanner'] = details['banner']
+                            self.KNOWN_RTE_SHOWS[key]['TVDBid'] = details['id']
+                            self.KNOWN_RTE_SHOWS[key]['IMDB_ID'] = details['IMDB_ID']
+                    else:
+                        print 'Getting Posters'
+                        if not 'Fanart' in showkeys and not 'Poster' in showkeys:
+                            details = Util().getDetailsForSerieByID(self.KNOWN_RTE_SHOWS[key]['title'], self.KNOWN_RTE_SHOWS[key]['TVDBid'])
+                            if not details is None:
+                                det_keys = details.keys()
+                                if 'Fanart' in det_keys:
+                                    self.KNOWN_RTE_SHOWS[key]['Fanart'] = details['Fanart']
+                                if 'Poster' in det_keys:
+                                    self.KNOWN_RTE_SHOWS[key]['Poster'] = details['Poster']
+                                if 'Season' in det_keys:
+                                    self.KNOWN_RTE_SHOWS[key]['Season'] = details['Season']
+                    
+                except:
+                    print 'Adding ' + show['title']
+                    
+                    self.KNOWN_RTE_SHOWS[key] = {}
+                    self.KNOWN_RTE_SHOWS[key]['title'] = show['title']
+                    details = Util().getSeriesDetailsByName(show['title'])
+                    if not details is None:
+                        self.KNOWN_RTE_SHOWS[key]['TVDBbanner'] = details['banner']
+                        self.KNOWN_RTE_SHOWS[key]['TVDBid'] = details['id']
+    
+                        print 'Getting Posters'
+                        details = Util().getDetailsForSerieByID(self.KNOWN_RTE_SHOWS[key]['title'], self.KNOWN_RTE_SHOWS[key]['TVDBid'])
+                        if not details is None:
+                            det_keys = details.keys()
+                            if 'Fanart' in det_keys:
+                                self.KNOWN_RTE_SHOWS[key]['Fanart'] = details['Fanart']
+                            if 'Poster' in det_keys:
+                                self.KNOWN_RTE_SHOWS[key]['Poster'] = details['Poster']
+                            if 'Season' in det_keys:
+                                self.KNOWN_RTE_SHOWS[key]['Season'] = details['Season']
+
+        S.dump(self.KNOWN_RTE_SHOWS, f, indent=4)
+        f.close()
+        
 if __name__ == '__main__':
     # Test Main Menu
     print RTE().getMainMenu()
+    
+    RTE().generateShowsAndSave()
     
     #for letter in RTEScrapper().RTESearchAtoZ():
     #    print letter
     #    for item in RTEScrapper().RTESearchAtoZ(letter['Title']):
     #        print item
+
+    #for item in RTE().SearchAtoZ('C'):
+    #    print item
 
     #for category in RTEScrapper().RTESearchByCategory():
     #    print category
@@ -295,11 +373,12 @@ if __name__ == '__main__':
     #        print item
 
     # Test Types
-    for type in [FEATURES, LASTCHANCE, LATEST]:
-        items = RTE().getMenuItems(type)
-        for item in items:
-            episodes = RTE().getEpisodes(urllib.quote(item['Title']))
-            for episode in episodes:
-                #print episode
-                for detail in RTE().getVideoDetails(episode['url']):
-                    print detail
+    #for type in [FEATURES, LASTCHANCE, LATEST]:
+    #    items = RTE().getMenuItems(type)
+    #    for item in items:
+    #        print item
+#            episodes = RTE().getEpisodes(urllib.quote(item['Title']))
+#            for episode in episodes:
+#                #print episode
+#                for detail in RTE().getVideoDetails(episode['url']):
+#                    print detail

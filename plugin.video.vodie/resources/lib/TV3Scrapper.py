@@ -12,8 +12,10 @@ import urllib, urllib2
 from TVSeriesUtil import Util
 import MenuConstants
 from datetime import date
+import simplejson as S
 
 # Url Constants
+KNOWN_TV3_SHOWS_URL  = 'http://xbmc-vodie.googlecode.com/svn/trunk/plugin.video.vodie/xml/tv3shows.json'
 TV3_URL      = 'http://www.tv3.ie/'
 #MAINURL      = TV3_URL + 'includes/ajax/video_all_shows.php'
 MAINURL      = TV3_URL + 'index.php'
@@ -26,6 +28,11 @@ CHANNEL = 'TV3'
 TV3LOGO = 'http://www.tv3.ie/graphics/global/image_logo_tv3_new.png'
 
 class TV3:
+    def __init__(self):
+        page = urllib2.urlopen(KNOWN_TV3_SHOWS_URL)
+        #page = open('../../xml/tv3shows.json', 'r')
+        self.KNOWN_TV3_SHOWS = S.load(page)
+        print len(self.KNOWN_TV3_SHOWS)
 
     def getChannelDetail(self):
         return {'Channel'  : CHANNEL,
@@ -46,6 +53,19 @@ class TV3:
             return default
 
     def getVideoDetails(self, url):
+        
+        yield {'Channel'     : CHANNEL,
+               'Title'       : CHANNEL,
+               'Director'    : CHANNEL,
+               'Genre'       : CHANNEL,
+               'Plot'        : CHANNEL,
+               'PlotOutline' : CHANNEL,
+               'id'          : url,
+               'url'         : url
+               }
+
+        return
+        
         # Load and read the URL
         f    = urllib2.urlopen(url)
         soup = BeautifulStoneSoup(f)
@@ -72,31 +92,25 @@ class TV3:
         text = f.read()
         f.close()
 
-        BACKGRDREGEXP = '<div id="content" style="background-image: url(.*?)">'
-        for mymatch in re.findall(BACKGRDREGEXP, text):
-            print mymatch
-
-        REGEXP = '<a class="whiteLink" href="videos.php\?openshows=1\&locID=(.*?)">(.*?)<\/a>'
         REGEXP = '<a href="(.*?)" class="dropDown" title="(.*?)">(.*?)</a>'    
         for mymatch in re.findall(REGEXP, text):
             title = str(mymatch[1])
-                        
-            #details = Util().getSeriesDetailsByName(title)
-            #if details is None:
-            #    pic = TV3LOGO
-            #elif 'Poster' in details.keys():
-            #    pic = details['Poster']
-            #elif 'Season' in details.keys():
-            #    pic = details['Season']
-            #else:
-            #    pic = TV3LOGO
+            
             pic = TV3LOGO
-
-            yield {'Channel' : CHANNEL,
-                   'Thumb'   : pic,
-                   'url'     : mymatch[0],
-                   'Title'   : title,
-                   'mode'    : MenuConstants.MODE_GETEPISODES}
+            try:
+                fanart = self.KNOWN_TV3_SHOWS[title]['Fanart_Image']
+                yield {'Channel' : CHANNEL,
+                       'Thumb'   : fanart,
+                       'url'     : mymatch[0],
+                       'Title'   : title,
+                       'mode'    : MenuConstants.MODE_GETEPISODES,
+                       'Fanart_Image' : fanart}
+            except:
+                yield {'Channel' : CHANNEL,
+                       'Thumb'   : pic,
+                       'url'     : mymatch[0],
+                       'Title'   : title,
+                       'mode'    : MenuConstants.MODE_GETEPISODES}
             
     def getEpisodes(self, showID):
         # Load and read the URL
@@ -111,7 +125,6 @@ class TV3:
         REGEXP = '^<a class="whiteLink" href="(videos.php\?video=.*?&date=(\d\d\d\d-\d\d-\d\d)&date_mode=&page=1&show_cal=\d*&newspanel=&showspanel=&web_only=&full_episodes=)">\s+<img src=(.*?) height="84" alt="(.*?)" title="(.*?)"'
         REGEXP = '<div id="panel_video_menu_entry"onclick="window.open\(\'(.*?)\',\'_self\'\)" onMouseOver="style.cursor=\'pointer\'">\s+<p class="video_menu_entry"><img class="float_left" src="(.*?)" width="116" height="64" alt="" border="0">\s+<strong>(.*?)</strong>\s+<br />(.*?)</p>'
         for mymatch in re.findall(REGEXP, text, re.MULTILINE):
-            print mymatch[0]
             # Default values
             description = 'None'
             link        = 'None'
@@ -197,7 +210,37 @@ class TV3:
         else:
             return 'None'
 
+    def generateShowsAndSave(self):
+        f = open('../../xml/tv3shows.json', 'w')
+        for show in self.getMainMenu():
+            # Load and read the URL
+            f2 = urllib2.urlopen(EPISODE_URL % (show['url']))
+            text = f2.read()
+            f2.close()
+
+            key = show['Title']
+            try:
+                showkeys = self.KNOWN_TV3_SHOWS[key].keys()                
+                print 'Updating ' + show['Title']
+                self.KNOWN_TV3_SHOWS[key]['']
+            except:
+                print 'Adding ' + show['Title']
+                self.KNOWN_TV3_SHOWS[key] = {}
+                self.KNOWN_TV3_SHOWS[key]['Title'] = show['Title']
+                
+                REGEXP = '<div id="content" style="background-image: url\((.*?)\)">'
+                for mymatch in re.findall(REGEXP, text, re.MULTILINE):
+                    fanart = mymatch
+                    print fanart
+                    self.KNOWN_TV3_SHOWS[key]['Fanart_Image'] = fanart
+
+        S.dump(self.KNOWN_TV3_SHOWS, f, indent=4)
+        f.close()
+
 if __name__ == '__main__':
+
+#    TV3().generateShowsAndSave()
+#    exit(1)
 
     items = TV3().getMainMenu()
     
@@ -206,4 +249,5 @@ if __name__ == '__main__':
         episodes = TV3().getEpisodes(item['url'])
         for episode in episodes:
             print episode
-            print TV3().getVideoDetails(episode['url'])
+            for detail in TV3().getVideoDetails(episode['url']):
+                print detail

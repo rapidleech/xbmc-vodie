@@ -10,7 +10,7 @@ import sys
 import MenuConstants
 
 # Channel Constants
-CHANNEL = 'RTE Radio'
+CHANNEL = 'Irish Radios'
 LOGOICON = 'http://www.rte.ie/radio/images/logo.gif'
 
 RADIOS = [
