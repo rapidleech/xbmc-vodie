@@ -34,9 +34,9 @@
         "Fanart_Image": "http://content.tv3.ie/content/microsite/122245_family_food_fight_bg.jpg", 
         "Title": "Family Food Fight"
     }, 
-    "Animal AE": {
+    "Animal A&E": {
         "Fanart_Image": "http://content.tv3.ie/content/microsite/89915_animal-a-and-e-main.jpg", 
-        "Title": "Animal AE"
+        "Title": "Animal A&E"
     }, 
     "Xpose": {
         "Fanart_Image": "http://content.tv3.ie/content/microsite/", 
@@ -162,4 +162,4 @@
         "Fanart_Image": "http://content.tv3.ie/content/microsite/133846_boozedupirishabroad.jpg", 
         "Title": "Boozed Up Irish Abroad"
     }, 
-    
+}    
