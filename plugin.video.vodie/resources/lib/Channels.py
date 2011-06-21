@@ -20,6 +20,8 @@ import TG4Scrapper
 from TG4Scrapper import TG4
 import MagnetWebTvScrapper
 from MagnetWebTvScrapper import Magnet
+import AnlarScrapper
+from AnlarScrapper import Anlar
 import ShoutcastRadioScrapper
 from ShoutcastRadioScrapper import ShoutcastRadio
 
@@ -31,6 +33,7 @@ class Channels:
         return [RTE().getChannelDetail(),
                 TV3().getChannelDetail(),
                 TG4().getChannelDetail(),
+                Anlar().getChannelDetail(),
                 Magnet().getChannelDetail(),
                 RTERadio().getChannelDetail(),
                 ShoutcastRadio().getChannelDetail(),
@@ -54,6 +57,8 @@ class Channels:
             return TV3().getVideoDetails(url)
         elif channel == MagnetWebTvScrapper.CHANNEL:
             return Magnet().getVideoDetails(url)
+        elif channel == AnlarScrapper.CHANNEL:
+            return Anlar().getVideoDetails(url)
 
     def getMainMenu(self, channel):
         if channel == RTEScrapper.CHANNEL:

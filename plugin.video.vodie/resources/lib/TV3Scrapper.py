@@ -54,17 +54,17 @@ class TV3:
 
     def getVideoDetails(self, url):
         
-        yield {'Channel'     : CHANNEL,
-               'Title'       : CHANNEL,
-               'Director'    : CHANNEL,
-               'Genre'       : CHANNEL,
-               'Plot'        : CHANNEL,
-               'PlotOutline' : CHANNEL,
-               'id'          : url,
-               'url'         : url
-               }
-
-        return
+#        yield {'Channel'     : CHANNEL,
+#               'Title'       : CHANNEL,
+#               'Director'    : CHANNEL,
+#               'Genre'       : CHANNEL,
+#               'Plot'        : CHANNEL,
+#               'PlotOutline' : CHANNEL,
+#               'id'          : url,
+#               'url'         : url
+#               }
+#
+#        return
         
         # Load and read the URL
         f    = urllib2.urlopen(url)
