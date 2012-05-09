@@ -1,3 +1,31 @@
+[B] Version 1.1.3g[/B]
+- fix for TV3 site redesign
+
+[B] Version 1.1.3g[/B]
+- fix for RTE "Live" content, handles Now/Next better
+- fix for some RTE Sports events not playing back
+
+[B] Version 1.1.3f[/B]
+- flz fix for 18-rated TV3 episodes
+- updated AnLar scraper for several channels
+- rewrote AerTV (formerly Magnet) plugin for new website
+
+[B]Version 1.1.3e[/B]
+- Cleaner logo
+
+[B]Version 1.1.3d[/B]
+- Fixed RTE scraper for recent change to RTE website
+
+[B]Version 1.1.3b[/B]
+- Fixed TV3 scraper for recent change to TV3 website
+
+[B]Version 1.1.3a[/B]
+- Imported nickhx/t0mm0 patch for MagnetWebTV
+- Fixed TV3 scraper for recent changes to TV3 website
+
+[B]Version 1.1.3[/B]
+- Imported from kitesurfing@kitesurfing.ie google code repos
+
 [B]Version 1.1.1[/B]
 
 - Bug Fixes
